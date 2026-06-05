@@ -1,0 +1,161 @@
+<!-- https://youtu.be/_xkSvufmjEs?si=mh-MXT2ZdUasYAYn&t=3416 -->
+<!-- adobe.ly/2GAgF93 -->
+<!-- https://scrimba.com/build-and-deploy-your-portfolio-c012 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="../img/face.jpg">
+
+    <!-- Help auto scale for desktop & mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ryungjae Lee - Portfolio</title>
+
+    <!-- Normalize the difference across browsers  https://necolas.github.io/normalize.css/ -->
+    <link rel="stylesheet" href="../external/normalize.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
+        integrity="sha256-46qynGAkLSFpVbEBog43gvNhfrOj+BmwXdxFgVK/Kvc=" crossorigin="anonymous" />
+
+    <!-- https://fonts.google.com/selection/embed -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <!-- alt text can be blank since the logo is purely decorative and putting something like logo isn't actually helpful -->
+            <img src="../img/cout.jpg" alt="">
+        </div>
+        <button class="nav-toggle" aria-label="toggle navigation">
+            <span class="hamburger"></span>
+        </button>
+        <nav class="nav">
+            <ul class="nav__list">
+                <li class="nav__item">
+                    <a href="../index.html" class="nav__link">Home</a>
+                </li>
+                <li class="nav__item">
+                    <a href="../index.html#skills" class="nav__link">Skills</a>
+                </li>
+                <li class="nav__item">
+                    <a href="../index.html#about" class="nav__link">About Me</a>
+                </li>
+                <li class="nav__item">
+                    <a href="../index.html#projects" class="nav__link">Projects</a>
+                </li>
+                <li class="nav__item">
+                    <a href="../index.html#resume" class="nav__link">Resume</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Introduction -->
+    <section class="intro">
+        <h1 class="section__title section__title--intro">
+            Project <strong>Shadow Mapping</strong>
+        </h1>
+        <p class="section__subtitle section__subtitle--intro">3D Graphics</p>
+        <img src="../img/portfolio_thumbnails/05_shadow.jpg" alt="a picture of this portfolio item" class="intro__img">
+    </section>
+
+    <div class="portfolio-item-individual">
+        <h2>Project Overview</h2>
+        <p>
+            This project implements <strong>shadow mapping</strong>, a widely-used real-time graphics technique that enables 
+            realistic shadow rendering in 3D applications. The core concept involves rendering the scene from the light source's 
+            perspective to capture depth information, then comparing those depths during the main render pass to determine whether 
+            fragments are in shadow or illuminated.
+        </p>
+        <p>
+            The implementation treats the light source as a perspective camera, generating view and projection matrices to create 
+            a virtual depth map. This depth map is stored in a framebuffer texture and subsequently used during forward rendering 
+            to apply realistic shadows with Phong lighting and exponential fog effects. The project provides interactive debugging 
+            tools to visualize the shadow map, light frustum, and various shadow parameters.
+        </p>
+
+        <h2>Tasks Completed</h2>
+        <ul>
+            <li><strong>Enhanced Texture Class:</strong> Extended OpenGL texture support with <code>LoadAsDepthTexture()</code> 
+                and <code>LoadAsRGBA()</code> methods, implementing proper texture comparison modes and depth formats (16/24/32/32F bits) 
+                with platform-aware fallbacks for WebGL compatibility.</li>
+            <li><strong>Implemented FrameBuffer Class:</strong> Created a complete framebuffer management system with RAII semantics, 
+                supporting optional depth and color texture attachments, framebuffer validation, and proper OpenGL resource cleanup.</li>
+            <li><strong>Camera Matrix Calculations:</strong> Implemented efficient camera transformation matrices including 
+                <code>ViewMatrix()</code> (world-to-camera) and <code>ToWorldMatrix()</code> (camera-to-world) using orthonormal basis 
+                properties to avoid expensive matrix inversions.</li>
+            <li><strong>Shadow Mapping Pipeline:</strong> Implemented the complete two-pass rendering system with 
+                <code>renderToDepthBuffer()</code> for depth map generation and <code>renderToScreen()</code> for shadow-aware rendering 
+                using hardware-accelerated shadow projection texture lookups.</li>
+            <li><strong>Shader Implementation:</strong> Developed seven specialized GLSL shaders including shadow comparison shaders 
+                with exponential fog integration, depth visualization, and frustum rendering. Applied gamma correction for proper 
+                color space handling.</li>
+            <li><strong>Visualization Tools:</strong> Implemented <code>drawLightFrustum()</code> and <code>drawDepthTexture()</code> 
+                for debugging, along with comprehensive ImGui controls for parameter tuning (FOV, shadow map resolution, depth precision, 
+                polygon offset).</li>
+            <li><strong>Demo Integration:</strong> Registered the shadow mapping demo in the DemosFactory with procedural scene generation 
+                featuring random materials, textures, and geometric variety.</li>
+            <li><strong>Technologies Used:</strong> C++17, OpenGL 4.x/ES3, GLSL, GLM math library, ImGui for debugging interface, 
+                CMake for cross-platform builds (Windows x64 + WebGL/Emscripten).</li>
+        </ul>
+
+        <h2>Reflection</h2>
+        <p>
+            <strong>Challenges Faced:</strong> The primary challenge was correctly implementing perspective shadow projection, particularly 
+            ensuring proper coordinate space transformations from world → light view → light projection → shadow texture space. Initial attempts 
+            had depth comparison issues requiring careful debugging of the projection matrix and texture coordinate calculations. Another 
+            challenge was handling the differences between desktop OpenGL and WebGL, specifically choosing between <code>TexStorage2D</code> 
+            and <code>TexImage2D</code> based on platform capabilities.
+        </p>
+        <p>
+            <strong>Solutions Implemented:</strong> I debugged by visualizing the depth texture and light frustum, which immediately revealed 
+            coordinate space issues. Using ImGui parameter controls allowed real-time experimentation with polygon offset, shadow map 
+            resolution, and depth formats. For platform compatibility, I implemented environment detection using <code>opengl::IsWebGL</code> 
+            and version checks to select appropriate OpenGL functions.
+        </p>
+        <p>
+            <strong>Key Learnings:</strong> This project deepened my understanding of the graphics pipeline, particularly the importance of 
+            carefully managing coordinate transformations and understanding the perspective divide in homogeneous coordinates. I learned how 
+            framebuffer objects enable efficient offline rendering passes and that shadow mapping's quality heavily depends on light frustum 
+            configuration and depth precision. Additionally, I gained valuable experience with platform-specific graphics API differences and 
+            the practical application of exponential fog for atmospheric effects. The project reinforced that debugging graphics code effectively 
+            requires visualization tools—the frustum and depth texture displays were invaluable for understanding complex transformations.
+        </p>
+    </div>
+
+    <div class="portfolio-item-individual">
+        <h2>Demo</h2>
+        <iframe id="demo" src="../webgl/D05ShadowMapping/graphics_fun.html?start=shadow" tabindex="-1"></iframe>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <a href="mailto:ryubgjae2@gmail.com" class="footer__link">ryubgjae2@gmail.com</a>
+        <ul class="social-list">
+            <li class="social-list__item">
+                <a class="social-list__link" href="https://www.linkedin.com/in/ryungjae-lee-662084251">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+            </li>
+            <li class="social-list__item">
+                <a class="social-list__link" href="https://github.com/rjlee03">
+                    <i class="fab fa-github"></i>
+                </a>
+            </li>
+            <!-- Want to list more? search : https://fontawesome.com/v5/search?ic=brands -->
+        </ul>
+    </footer>
+
+    <script src="../js/index.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,148 @@
+<!-- https://youtu.be/_xkSvufmjEs?si=mh-MXT2ZdUasYAYn&t=3416 -->
+<!-- adobe.ly/2GAgF93 -->
+<!-- https://scrimba.com/build-and-deploy-your-portfolio-c012 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="../img/face.jpg">
+
+    <!-- Help auto scale for desktop & mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ryungjae Lee - Portfolio</title>
+
+    <!-- Normalize the difference across browsers  https://necolas.github.io/normalize.css/ -->
+    <link rel="stylesheet" href="../external/normalize.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
+        integrity="sha256-46qynGAkLSFpVbEBog43gvNhfrOj+BmwXdxFgVK/Kvc=" crossorigin="anonymous" />
+
+    <!-- https://fonts.google.com/selection/embed -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <!-- alt text can be blank since the logo is purely decorative and putting something like logo isn't actually helpful -->
+            <img src="../img/cout.jpg" alt="">
+        </div>
+        <button class="nav-toggle" aria-label="toggle navigation">
+            <span class="hamburger"></span>
+        </button>
+        <nav class="nav">
+            <ul class="nav__list">
+                <li class="nav__item">
+                    <a href="../index.html" class="nav__link">Home</a>
+                </li>
+                <li class="nav__item">
+                    <a href="../index.html#skills" class="nav__link">Skills</a>
+                </li>
+                <li class="nav__item">
+                    <a href="../index.html#about" class="nav__link">About Me</a>
+                </li>
+                <li class="nav__item">
+                    <a href="../index.html#projects" class="nav__link">Projects</a>
+                </li>
+                <li class="nav__item">
+                    <a href="../index.html#resume" class="nav__link">Resume</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Introduction -->
+    <section class="intro">
+        <h1 class="section__title section__title--intro">
+            Project <strong>Hello Quad</strong>
+        </h1>
+        <p class="section__subtitle section__subtitle--intro">3D Graphics</p>
+        <img src="../img/portfolio_thumbnails/01_hello.jpg" alt="a picture of this portfolio item" class="intro__img">
+    </section>
+
+    <div class="portfolio-item-individual">
+        <h2>Project Overview</h2>
+        <p>
+            This project is the first demo assignment for CS250 Computer Graphics II at DigiPen Institute of Technology.
+            The goal was to build a working OpenGL rendering pipeline from scratch by implementing core graphics classes,
+            writing GLSL shaders, and animating a textured quad on screen.
+        </p>
+        <p>
+            The project targets three platforms: Windows (native OpenGL 3.3), and Web (WebGL 2 via Emscripten),
+            ensuring the code is compatible across all three environments. It also features a live asset reloading system,
+            allowing shaders and textures to be swapped while the application is running.
+        </p>
+
+        <h2>Tasks Completed</h2>
+        <ul>
+            <li><strong>VertexBuffer</strong> &mdash; Implemented GPU vertex buffer management using
+                <code>glGenBuffers</code>, <code>glBindBuffer</code>, <code>glBufferData</code>, and
+                <code>glBufferSubData</code> through the project's GL wrapper layer.</li>
+            <li><strong>IndexBuffer</strong> &mdash; Implemented indexed rendering support, uploading index data
+                to the GPU and binding it to <code>GL_ELEMENT_ARRAY_BUFFER</code>.</li>
+            <li><strong>VertexArray</strong> &mdash; Implemented Vertex Array Object management including
+                vertex attribute setup (<code>glVertexAttribPointer</code>, <code>glEnableVertexAttribArray</code>),
+                instancing divisor support, and both <code>DrawElements</code> and <code>DrawArrays</code> draw calls.</li>
+            <li><strong>Texture</strong> &mdash; Implemented 2D texture loading from file and memory using STB image,
+                with configurable filtering and wrapping modes via <code>glTexParameteri</code>.</li>
+            <li><strong>Vertex Shader Animation</strong> &mdash; The quad smoothly zooms in and out and rotates,
+                stopping at full zoom to reverse direction. Mouse position is tracked and used to move the quad
+                across the screen.</li>
+            <li><strong>Fragment Shader Animation</strong> &mdash; A three-channel RGB tint pulses over time using
+                offset sine waves, creating a smooth color-cycling effect blended over the texture.</li>
+            <li><strong>Custom Texture</strong> &mdash; Replaced the default <code>paint_me.png</code> with a
+                custom hand-drawn image.</li>
+            <li><strong>Window Title</strong> &mdash; Updated the application title to display my name.</li>
+        </ul>
+
+        <h2>Reflection</h2>
+        <p>
+            The hardest part of this assignment was creating the custom texture image. Since I am not an artist,
+            I did not know what design I wanted to make. I had to experiment with different ideas before finally
+            settling on something I was happy with.
+        </p>
+        <p>
+            Through this assignment, I got much more comfortable working with OpenGL. I learned how to implement
+            core graphics classes like vertex buffers, index buffers, vertex arrays, and textures from scratch.
+            I also learned how to write GLSL shaders and animate them using uniforms like time and mouse position.
+            Additionally, I got exposure to building a project for the web using Emscripten, which was a completely
+            new experience for me.
+        </p>
+    </div>
+
+    <div class="portfolio-item-individual">
+        <h2>Demo</h2>
+        <iframe id="demo" src="../webgl/D01HelloQuad/graphics_fun.html"></iframe>
+    </div>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <a href="mailto:my.email@digipen.edu" class="footer__link">my.email@digipen.edu</a>
+        <ul class="social-list">
+            <li class="social-list__item">
+                <a class="social-list__link" href="https://linkedin.com/in/mylinkedinid">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+            </li>
+            <li class="social-list__item">
+                <a class="social-list__link" href="https://github.com/mygithubid">
+                    <i class="fab fa-github"></i>
+                </a>
+            </li>
+            <!-- Want to list more? search : https://fontawesome.com/v5/search?ic=brands -->
+        </ul>
+    </footer>
+
+    <script src="../js/index.js"></script>
+
+</body>
+
+</html>

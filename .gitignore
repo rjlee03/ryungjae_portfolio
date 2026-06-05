@@ -1,0 +1,43 @@
+# IDE folders
+.vs/
+.vscode/
+.idea/
+
+# CMake build output
+build/
+Build/
+
+# Compiled binaries and libraries
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+*.o
+*.obj
+*.pdb
+
+# Emscripten / WebAssembly intermediates
+*.wasm
+*.bc
+*.jsz
+
+# clang tooling
+.cache/
+
+# ImGui generated files
+imgui.ini
+
+# macOS
+.DS_Store
+
+# Windows thumbnail cache
+Thumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.log
+*~
+.claude/

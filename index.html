@@ -1,0 +1,292 @@
+<!-- https://youtu.be/_xkSvufmjEs?si=mh-MXT2ZdUasYAYn&t=3416 -->
+<!-- adobe.ly/2GAgF93 -->
+<!-- https://scrimba.com/build-and-deploy-your-portfolio-c012 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="img/face.jpg">
+
+    <!-- Help auto scale for desktop & mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ryungjae Lee - Portfolio</title>
+
+    <!-- Normalize the difference across browsers  https://necolas.github.io/normalize.css/ -->
+    <link rel="stylesheet" href="external/normalize.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
+        integrity="sha256-46qynGAkLSFpVbEBog43gvNhfrOj+BmwXdxFgVK/Kvc=" crossorigin="anonymous" />
+
+    <!-- https://fonts.google.com/selection/embed -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap"
+        rel="stylesheet" />
+
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <!-- alt text can be blank since the logo is purely decorative and putting something like logo isn't actually helpful -->
+            <img src="img/cout.jpg" alt="">
+        </div>
+        <button class="nav-toggle" aria-label="toggle navigation">
+            <span class="hamburger"></span>
+        </button>
+        <nav class="nav">
+            <ul class="nav__list">
+                <li class="nav__item"> <a href="#home" class="nav__link">Home</a> </li>
+                <li class="nav__item"> <a href="#skills" class="nav__link">Skills</a> </li>
+                <li class="nav__item"> <a href="#about" class="nav__link">About Me</a> </li>
+                <li class="nav__item"> <a href="#projects" class="nav__link">Projects</a> </li>
+                <li class="nav__item"> <a href="#resume" class="nav__link">Resume</a> </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Introduction -->
+
+    <section class="intro" id="#home">
+        <div class="intro-bg">
+            <canvas id="intro-canvas"></canvas>
+        </div>
+        <script>
+        (function() {
+            const canvas = document.getElementById('intro-canvas');
+            const gl = canvas.getContext('webgl');
+            const vsSource = `attribute vec2 a_position; void main() { gl_Position = vec4(a_position, 0, 1); }`;
+            const fsSource = `
+                precision mediump float;
+                uniform vec2 u_resolution;
+                uniform vec2 u_mouse;
+                uniform float u_time;
+                void main() {
+                    vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+                    vec2 mouse = u_mouse / u_resolution.xy;
+                    float dist = distance(uv, mouse);
+                    float ripple = sin(dist * 30.0 - u_time * 3.0) * 0.5 + 0.5;
+                    ripple *= smoothstep(0.6, 0.0, dist);
+                    vec3 dark = vec3(0.102, 0.102, 0.180);
+                    vec3 accent = vec3(0.914, 0.271, 0.376);
+                    vec3 color = mix(dark, accent, ripple * 0.8);
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `;
+            function createShader(gl, type, source) {
+                const shader = gl.createShader(type);
+                gl.shaderSource(shader, source);
+                gl.compileShader(shader);
+                return shader;
+            }
+            const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+            const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+            const program = gl.createProgram();
+            gl.attachShader(program, vs);
+            gl.attachShader(program, fs);
+            gl.linkProgram(program);
+            gl.useProgram(program);
+            const positions = new Float32Array([-1,-1, 1,-1, -1,1, 1,1]);
+            const buf = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+            const posLoc = gl.getAttribLocation(program, 'a_position');
+            gl.enableVertexAttribArray(posLoc);
+            gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+            const resLoc = gl.getUniformLocation(program, 'u_resolution');
+            const mouseLoc = gl.getUniformLocation(program, 'u_mouse');
+            const timeLoc = gl.getUniformLocation(program, 'u_time');
+            let mouse = { x: canvas.offsetWidth / 2, y: canvas.offsetHeight / 2 };
+            document.addEventListener('mousemove', e => {
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = e.clientX - rect.left;
+                mouse.y = e.clientY - rect.top;
+            });
+            function resize() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+                gl.viewport(0, 0, canvas.width, canvas.height);
+            }
+            window.addEventListener('resize', resize);
+            resize();
+            function render(t) {
+                gl.uniform2f(resLoc, canvas.width, canvas.height);
+                gl.uniform2f(mouseLoc, mouse.x, canvas.height - mouse.y);
+                gl.uniform1f(timeLoc, t * 0.001);
+                gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+                requestAnimationFrame(render);
+            }
+            requestAnimationFrame(render);
+        })();
+        </script>
+        <h1 class="section__title section__title--intro">
+            Hi, I am <strong>Ryungjae Lee</strong>
+        </h1>
+        <p class="section__subtitle section__subtitle--intro">Game Programmer & Designer</p>
+        <img src="img/face.jpg" alt="a picture of Ryungjae Lee smiling" class="intro__img" />
+    </section>
+
+    <!-- My Services -->
+    <section class="my-services" id="skills">
+        <h2 class="section__title section__title--services">SKILLS</h2>
+        <div class="services">
+            <div class="service">
+                <h3>C++</h3>
+                <p>
+                    My primary programming language. I have used C++ to build game engine systems from scratch,
+                    implement computer graphics techniques such as shading and rendering, and collaborate with
+                    teams to ship complete games.
+                </p>
+            </div>
+
+            <div class="service">
+                <h3>Producing Games</h3>
+                <p>
+                    I have experience managing a team through the full game development cycle — scoping ideas,
+                    tracking milestones, and preparing the team for presentations. I keep projects on schedule
+                    and help turn concepts into shippable games.
+                </p>
+            </div>
+
+            <div class="service">
+                <h3>Problem Solving & Debugging</h3>
+                <p>
+                    Working through projects and assignments has given me strong debugging instincts.
+                    I dig into bugs systematically to find root causes, and when team conflicts arise
+                    I step in to communicate and resolve them so the project keeps moving forward.
+                </p>
+            </div>
+        </div>
+
+        <a href="#projects" class="btn">Projects</a>
+    </section>
+
+    <!-- About Me -->
+    <section class="about-me" id="about">
+        <h2 class="section__title section__title--about">Who I am</h2>
+        <p class="section__subtitle section__subtitle--about">
+            Student Programmer at DigiPen Institute of Technology
+        </p>
+
+        <div class="about-me__body">
+            <p>
+                I am a student in DigiPen Institute of Technology studying Computer Science in Real-Time Interactive Simulation.
+                I am passionate about game development and have experience in programming, design, and production. 
+
+            </p>
+            <p>
+                I have a strong foundation in C++ and have worked on various projects that showcase my skills in game development. 
+                I am eager to apply my knowledge and skills to create engaging and innovative games.
+            </p>
+        </div>
+        <img src="img/tall.jpg" alt="picture of Ryungjae Lee" class="about-me__img" />
+    </section>
+
+    <!-- My Portfolio -->
+    <section class="my-projects" id="projects">
+        <h2 class="section__title section__title--projects">My Projects</h2>
+        <p class="section__subtitle section__subtitle--projects">
+            A selection of my range of projects
+        </p>
+        <div class="portfolio">
+            <a href="portfolio/01_hello.html" class="portfolio__item">
+                <img src="img/portfolio_thumbnails/01_hello.jpg" alt="" class="portfolio__img" />
+            </a>
+            <a href="portfolio/02_meshes.html" class="portfolio__item">
+                <img src="img/portfolio_thumbnails/02_meshes.jpg" alt="" class="portfolio__img" />
+            </a>
+            <a href="portfolio/03_fog.html" class="portfolio__item">
+                <img src="img/portfolio_thumbnails/03_fog.jpg" alt="" class="portfolio__img" />
+            </a>
+            <a href="portfolio/04_toon.html" class="portfolio__item">
+                <img src="img/portfolio_thumbnails/04_toon.jpg" alt="" class="portfolio__img" />
+            </a>
+            <a href="portfolio/05_shadow.html" class="portfolio__item">
+                <img src="img/portfolio_thumbnails/05_shadow.jpg" alt="" class="portfolio__img" />
+            </a>
+            <a href="portfolio/06_value.html" class="portfolio__item">
+                <img src="img/portfolio_thumbnails/06_value.jpg" alt="" class="portfolio__img" />
+            </a>
+            <a href="portfolio/07_gradient.html" class="portfolio__item">
+                <img src="img/portfolio_thumbnails/07_gradient.jpg" alt="" class="portfolio__img" />
+            </a>
+
+        </div>
+    </section>
+
+    <!-- Resume Section -->
+    <section class="my-resume" id="resume">
+        <h2 class="section__title section__title--resume">Resume</h2>
+        <a target="_blank" href="docs/Resume.pdf"><i class="far fa-file-pdf"></i> PDF</a>
+
+        <div class="resume-section">
+            <h3>Projects</h3>
+            <div class="resume-item">
+                <p>
+                    <b>Art Lead, One Day Santa</b></br>
+                    October 2024 - December 2024</br>
+                    <em>Daegu, South Korea</em></br>
+                    2D game where you become Santa and shoot presents to give out to kids.
+                    Collaborated with a team of 3 and developed using raylib.
+                    Designed most of the art and made ideas for the game features.
+                </p>
+            </div>
+            <div class="resume-item">
+                <p>
+                    <b>Producer, Nano Clash</b></br>
+                    March 2025 - June 2025</br>
+                    <em>Daegu, South Korea</em></br>
+                    2D arena shoot roguelike game.
+                    Collaborated with a team of 4 and developed a game engine using raylib.
+                    Designed most of the game ideas such as unique weapons and monster concepts.
+                </p>
+            </div>
+            <div class="resume-item">
+                <p>
+                    <b>Producer, No. 99</b></br>
+                    September 2025 - Present</br>
+                    <em>Daegu, South Korea</em></br>
+                    2D side scroller adventure game.
+                    Collaborated with a team of 4 and developed using OpenGL with a custom game engine.
+                    Designed main menu, added features, and prepared the team for presentation.
+                </p>
+            </div>
+
+            <h3>Education</h3>
+            <div class="resume-item">
+                <p>
+                    <b>Bachelor of Science in Computer Science in Real-Time Interactive Simulation</b></br>
+                    2024 - Present</br>
+                    <em>Daegu, Korea & Redmond, WA, USA</em></br>
+                    Relevant Courses: CS250 - Computer Graphics, GAM 250 - Game Project.
+                </p>
+            </div>
+        </div>
+    </section>
+    <!-- /Resume Section -->
+
+    <!-- Footer -->
+    <footer class="footer">
+        <a href="mailto:ryubgjae2@gmail.com" class="footer__link">ryubgjae2@gmail.com</a>
+        <ul class="social-list">
+            <li class="social-list__item">
+                <a class="social-list__link" href="https://www.linkedin.com/in/ryungjae-lee-662084251">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+            </li>
+            <li class="social-list__item">
+                <a class="social-list__link" href="https://github.com/rjlee03">
+                    <i class="fab fa-github"></i>
+                </a>
+            </li>
+            <!-- Want to list more? search : https://fontawesome.com/v5/search?ic=brands -->
+        </ul>
+    </footer>
+
+    <script src="js/index.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,153 @@
+<!-- https://youtu.be/_xkSvufmjEs?si=mh-MXT2ZdUasYAYn&t=3416 -->
+<!-- adobe.ly/2GAgF93 -->
+<!-- https://scrimba.com/build-and-deploy-your-portfolio-c012 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="../img/face.jpg">
+
+    <!-- Help auto scale for desktop & mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ryungjae Lee - Portfolio</title>
+
+    <!-- Normalize the difference across browsers  https://necolas.github.io/normalize.css/ -->
+    <link rel="stylesheet" href="../external/normalize.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css"
+        integrity="sha256-46qynGAkLSFpVbEBog43gvNhfrOj+BmwXdxFgVK/Kvc=" crossorigin="anonymous" />
+
+    <!-- https://fonts.google.com/selection/embed -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <!-- alt text can be blank since the logo is purely decorative and putting something like logo isn't actually helpful -->
+            <img src="../img/cout.jpg" alt="">
+        </div>
+        <button class="nav-toggle" aria-label="toggle navigation">
+            <span class="hamburger"></span>
+        </button>
+        <nav class="nav">
+            <ul class="nav__list">
+                <li class="nav__item">
+                    <a href="../index.html" class="nav__link">Home</a>
+                </li>
+                <li class="nav__item">
+                    <a href="../index.html#skills" class="nav__link">Skills</a>
+                </li>
+                <li class="nav__item">
+                    <a href="../index.html#about" class="nav__link">About Me</a>
+                </li>
+                <li class="nav__item">
+                    <a href="../index.html#projects" class="nav__link">Projects</a>
+                </li>
+                <li class="nav__item">
+                    <a href="../index.html#resume" class="nav__link">Resume</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Introduction -->
+    <section class="intro">
+        <h1 class="CS250_make_portfolio">
+            Project <strong>Procedural Geometric Modeling</strong>
+        </h1>
+        <p class="section__subtitle section__subtitle--intro">3D Graphics</p>
+        <img src="../img/portfolio_thumbnails/02_meshes.jpg" alt="a picture of this portfolio item" class="intro__img">
+    </section>
+
+    <div class="portfolio-item-individual">
+        <h2>Project Overview</h2>
+        <p>
+            This is the second assignment for CS250 Computer Graphics II at DigiPen Institute of Technology.
+            The goal was to write code that procedurally generates six 3D shapes — Plane, Cube, Sphere, Torus,
+            Cylinder, and Cone — purely from math, without loading any model files.
+        </p>
+        <p>
+            Each shape is built at runtime using parametric equations, with a configurable number of stacks and slices
+            that control how smooth or blocky it looks. The shapes are rendered three ways: textured, wireframe, and
+            with normal vectors drawn so you can see if the lighting math is correct.
+        </p>
+
+        <h2>Tasks Completed</h2>
+        <ul>
+            <li><strong>build_index_buffer</strong> &mdash; Wrote the index buffer generator that connects a grid of
+                vertices into triangles. Each cell of the stacks &times; slices grid becomes two triangles, and this
+                same buffer is reused by every shape that is built on a grid.</li>
+            <li><strong>create_plane_vertices</strong> &mdash; Generated a flat plane centered at the origin with
+                positions in the XY plane, normals pointing in the +Z direction, and UV coordinates mapped from
+                (0,0) to (1,1) across the surface.</li>
+            <li><strong>create_sphere</strong> &mdash; Used spherical coordinates (beta for latitude, alpha for
+                longitude) to place each vertex on the surface of a sphere. Normals are just the normalized
+                position vector since every point faces outward from the center.</li>
+            <li><strong>create_torus</strong> &mdash; Built a torus using a major radius of 0.35 and minor radius
+                of 0.15. The normal at each vertex is computed by pointing away from the nearest point on the
+                torus's center ring.</li>
+            <li><strong>add_cap</strong> &mdash; Wrote a helper that adds a triangle fan to close the top or bottom
+                of a cylinder or cone. Getting the winding order right depending on which end the cap is on was
+                a key detail here.</li>
+            <li><strong>create_cylinder</strong> &mdash; Generated the side of the cylinder with outward-facing
+                normals, then called add_cap for both the top and bottom to close it off.</li>
+            <li><strong>create_cone</strong> &mdash; Built the cone with a radius that tapers from the base to the
+                tip. The normals are calculated using the tangent direction so the shading looks smooth rather
+                than faceted.</li>
+            <li><strong>convert_to_lines_pattern</strong> &mdash; Converted the triangle index buffer into a line
+                index buffer for wireframe rendering by pairing up the edges of each triangle.</li>
+        </ul>
+
+        <h2>Reflection</h2>
+        <p>
+            The torus was by far the hardest shape to implement. I understood the basic idea — sweep a circle around
+            an axis — but figuring out the correct normal calculation took a while. You have to find the center point
+            on the inner ring and point away from it, which is not obvious at first. Once I saw it working with the
+            normal visualization turned on, it clicked.
+        </p>
+        <p>
+            I also learned that the index buffer pattern for the grid is surprisingly flexible. I wrote it once and
+            it worked for the plane, sphere, torus, and the body of the cylinder and cone without any changes.
+            The caps were a separate challenge since they need a triangle fan layout instead of a grid, which is
+            a completely different index pattern. Overall this assignment gave me a much clearer picture of how
+            3D geometry is actually stored and sent to the GPU.
+        </p>
+    </div>
+
+    <div class="portfolio-item-individual">
+        <h2>Demo</h2>
+        <iframe id="demo" src="../webgl/D02ProceduralMeshes/graphics_fun.html?start=meshes" tabindex="-1"></iframe>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <a href="mailto:my.email@digipen.edu" class="footer__link">my.email@digipen.edu</a>
+        <ul class="social-list">
+            <li class="social-list__item">
+                <a class="social-list__link" href="https://linkedin.com/in/mylinkedinid">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+            </li>
+            <li class="social-list__item">
+                <a class="social-list__link" href="https://github.com/mygithubid">
+                    <i class="fab fa-github"></i>
+                </a>
+            </li>
+            <!-- Want to list more? search : https://fontawesome.com/v5/search?ic=brands -->
+        </ul>
+    </footer>
+
+    <script src="../js/index.js"></script>
+
+</body>
+
+</html>
