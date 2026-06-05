@@ -419,7 +419,7 @@ namespace demos
 
     void D05ShadowMapping::buildMeshes()
     {
-        const std::array geometries = { graphics::create_trefoil(256, 64), graphics::create_plane(1, 1),     graphics::create_cube(1, 1), graphics::create_sphere(64, 64),
+        const std::array geometries = { graphics::create_torus(256, 64), graphics::create_plane(1, 1),     graphics::create_cube(1, 1), graphics::create_sphere(64, 64),
                                         graphics::create_torus(64, 64),    graphics::create_cylinder(4, 64), graphics::create_cone(4, 64) };
 
         for (size_t i = 0; i < subMeshes.size(); ++i)
