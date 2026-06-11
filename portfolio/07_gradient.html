@@ -68,17 +68,77 @@
 
     <div class="portfolio-item-individual">
         <h2>Project Overview</h2>
-        <p>Provide a brief description of the project, its purpose, and what you aimed to achieve.</p>
+        <p>
+            This project implements <strong>3D Improved Perlin Gradient Noise</strong> entirely on the GPU and uses it to
+            generate a family of procedural texture patterns. A full-screen quad is rendered into an offscreen
+            <code>R32F</code> framebuffer, where a fragment shader evaluates the noise function for every texel,
+            producing a single 2D "slice" through a continuous 3D noise volume.
+        </p>
+        <p>
+            The generated noise texture can be viewed directly as a tiled 2D texture, or used to displace the vertices
+            of a plane mesh to create a real-time, terrain-like 3D surface. A spectator camera lets you fly around the
+            generated surface, and ImGui controls allow tuning the texture resolution, tiling scale, the noise pattern,
+            and the Z-slice scrubbed through the 3D noise volume.
+        </p>
 
         <h2>Tasks Completed</h2>
         <ul>
-            <li>Describe the tasks you completed for this project.</li>
-            <li>Be specific about your contributions and the technologies used.</li>
+            <li><strong>Texture Format Support:</strong> Extended the <code>Texture</code> class with a
+                <code>ColorFormat</code> enum (<code>RGBA8</code>, <code>RGBA32F</code>, <code>R32F</code>) and a
+                <code>LoadAsFormat()</code> method that allocates GPU storage with <code>TexStorage2D</code> on
+                WebGL/OpenGL 4.2+ and falls back to <code>TexImage2D</code> on older desktop OpenGL.</li>
+            <li><strong>Configurable FrameBuffer:</strong> Updated the <code>FrameBuffer</code> class so its
+                <code>ColorComponent</code> enum maps directly onto the new <code>Texture::ColorFormat</code> values, added
+                a non-const <code>ColorTexture()</code> accessor, and routed <code>LoadWithSpecification()</code> through
+                <code>LoadAsFormat()</code> so any supported color format can be requested.</li>
+            <li><strong>Improved 3D Perlin Noise (GLSL):</strong> Implemented gradient noise from scratch in
+                <code>gen_gradient_noise.frag</code> using a hardcoded 64-entry permutation table, 12 fixed cube-edge
+                gradient directions (cycled via the permutation table instead of randomly generated), and quintic
+                fade/interpolation - no gradient derivatives required.</li>
+            <li><strong>Noise Patterns:</strong> Built <strong>Plain Gradient</strong>, <strong>Fractal Sum</strong>,
+                <strong>Turbulence</strong>, <strong>Marble</strong>, and <strong>Wood</strong> patterns on top of the base
+                noise function, each remapped from its native range into <code>[0,1]</code> for storage in the
+                <code>R32F</code> noise texture.</li>
+            <li><strong>Seamless Tiling:</strong> Designed the noise lattice so that texture coordinates
+                <code>[0,1]</code> map to exactly one period of the noise (and each fractal octave wraps at its own
+                period), so the generated texture tiles seamlessly under <code>GL_REPEAT</code> when the tiling scale is
+                increased.</li>
+            <li><strong>Visualization Shaders:</strong> Wrote <code>simple.vert</code>/<code>simple.frag</code> to display
+                a 2D slice of the noise as a tiled textured quad, and <code>surface.vert</code> (reusing
+                <code>simple.frag</code>) to displace a high-resolution plane mesh by the noise texture, producing a 3D
+                terrain visualization.</li>
+            <li><strong>Demo Integration:</strong> Registered the demo in the <code>DemosFactory</code>, added an
+                offscreen rendering pass each frame, and exposed ImGui controls for texture resolution, tiling scale,
+                Z-slice, view mode (texture vs. surface), pattern type, and surface mesh resolution/scale.</li>
+            <li><strong>Technologies Used:</strong> C++20, OpenGL 4.x/ES3 (GLSL ES 3.00), GLM, ImGui, CMake for
+                cross-platform builds (Windows x64 + WebGL/Emscripten).</li>
         </ul>
 
         <h2>Reflection</h2>
-        <p>Reflect on the project, discussing any challenges faced, solutions implemented, and what you learned from the
-            experience.</p>
+        <p>
+            <strong>Challenges Faced:</strong> The trickiest part was making the noise function periodic without simply
+            relying on the permutation table's natural 64-element wraparound, since that frequency was far too high for
+            a visually pleasing texture. I also had to be careful with the classic Perlin lattice-hashing trick (using
+            <code>perm[A]+1</code> to represent neighboring lattice cells), which breaks once you introduce a custom,
+            smaller wrap period.
+        </p>
+        <p>
+            <strong>Solutions Implemented:</strong> Instead of the classic "+1" hashing shortcut, I explicitly compute
+            both the current and next lattice coordinate for each axis with <code>mod(coord, period)</code> before
+            hashing, which guarantees <code>noise(0) == noise(period)</code> in every dimension. For fractal sum and
+            turbulence, each octave doubles both the sampling frequency and the wrap period together, so every octave
+            remains independently tileable. Sampling the noise texture in the vertex shader for the surface
+            displacement required switching from <code>texture()</code> to <code>textureLod()</code>, since implicit
+            derivatives aren't available outside fragment shaders.
+        </p>
+        <p>
+            <strong>Key Learnings:</strong> This project gave me a much deeper understanding of how Improved Perlin Noise
+            actually works under the hood - the role of the permutation table, why 12 gradient directions are used
+            instead of fully random ones, and why quintic fading matters for smooth derivatives. I also learned how
+            useful it is to generate procedural data into an offscreen framebuffer once per frame and reuse it for
+            multiple visualizations (a flat textured quad and a displaced 3D surface) rather than recomputing the noise
+            per-vertex or per-pixel in the final pass.
+        </p>
     </div>
 
     <div class="portfolio-item-individual">
@@ -88,15 +148,15 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <a href="mailto:my.email@digipen.edu" class="footer__link">my.email@digipen.edu</a>
+        <a href="mailto:ryubgjae2@gmail.com" class="footer__link">ryubgjae2@gmail.com</a>
         <ul class="social-list">
             <li class="social-list__item">
-                <a class="social-list__link" href="https://linkedin.com/in/mylinkedinid">
+                <a class="social-list__link" href="https://www.linkedin.com/in/ryungjae-lee-662084251">
                     <i class="fab fa-linkedin"></i>
                 </a>
             </li>
             <li class="social-list__item">
-                <a class="social-list__link" href="https://github.com/mygithubid">
+                <a class="social-list__link" href="https://github.com/rjlee03">
                     <i class="fab fa-github"></i>
                 </a>
             </li>

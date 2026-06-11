@@ -47,6 +47,15 @@ namespace opengl
 
         [[nodiscard]] bool LoadAsRGBA(int image_width, int image_height) noexcept;
 
+        enum ColorFormat : GLenum
+        {
+            RGBA8   = GL_RGBA8,
+            RGBA32F = GL_RGBA32F,
+            R32F    = GL_R32F,
+        };
+
+        [[nodiscard]] bool LoadAsFormat(int image_width, int image_height, ColorFormat format) noexcept;
+
         void UseForSlot(unsigned int texture_unit) const noexcept;
 
         [[nodiscard]] Handle GetHandle() const noexcept

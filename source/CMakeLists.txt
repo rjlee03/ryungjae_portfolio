@@ -14,6 +14,7 @@ set(SOURCE_CODE
     demos/D01HelloQuad.hpp demos/D01HelloQuad.cpp
     demos/D02ProceduralMeshes.hpp demos/D02ProceduralMeshes.cpp
     demos/D05ShadowMapping.hpp demos/D05ShadowMapping.cpp
+    demos/D07GradientNoise.hpp demos/D07GradientNoise.cpp
     demos/DemosFactory.hpp demos/DemosFactory.cpp
     demos/IDemo.hpp
 
@@ -80,7 +81,6 @@ if(EMSCRIPTEN)
     -sWASM=1 
     -sDISABLE_EXCEPTION_CATCHING=0 
     -sALLOW_MEMORY_GROWTH=1
-    -sMAXIMUM_MEMORY=8GB
     -sEXIT_RUNTIME=1
     -sSINGLE_FILE=1 
     --embed-file ${CMAKE_SOURCE_DIR}/assets@/assets

@@ -45,10 +45,17 @@ namespace opengl
             return colorTexture;
         }
 
+        Texture& ColorTexture()
+        {
+            return colorTexture;
+        }
+
         enum ColorComponent
         {
             None,
-            RGBA8
+            RGBA8   = Texture::ColorFormat::RGBA8,
+            RGBA32F = Texture::ColorFormat::RGBA32F,
+            R32F    = Texture::ColorFormat::R32F,
         };
 
         struct Specification

@@ -160,6 +160,35 @@ namespace opengl
         return LoadFromMemory(image_width, image_height, nullptr);
     }
 
+    bool Texture::LoadAsFormat(int image_width, int image_height, ColorFormat format) noexcept
+    {
+        delete_texture();
+        width  = image_width;
+        height = image_height;
+
+        GL::GenTextures(1, &texture_handle);
+        GL::BindTexture(GL_TEXTURE_2D, texture_handle);
+
+        if (opengl::IsWebGL || opengl::current_version() >= opengl::version(4, 2))
+        {
+            GL::TexStorage2D(GL_TEXTURE_2D, 1, static_cast<GLenum>(format), image_width, image_height);
+        }
+        else
+        {
+            const GLenum pixel_format = (format == R32F) ? GL_RED : GL_RGBA;
+            const GLenum pixel_type   = (format == RGBA8) ? GL_UNSIGNED_BYTE : GL_FLOAT;
+            GL::TexImage2D(GL_TEXTURE_2D, 0, static_cast<GLint>(format), image_width, image_height, 0, pixel_format, pixel_type, nullptr);
+        }
+
+        GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering);
+        GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering);
+        GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapping[S]);
+        GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapping[T]);
+        GL::BindTexture(GL_TEXTURE_2D, 0);
+
+        return true;
+    }
+
     void Texture::delete_texture() noexcept
     {
         GL::DeleteTextures(1, &texture_handle);
