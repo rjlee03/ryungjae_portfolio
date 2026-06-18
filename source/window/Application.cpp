@@ -21,6 +21,9 @@
 #include <SDL.h>
 #include <imgui.h>
 #include <sstream>
+#if defined(IS_WEBGL2)
+#    include <emscripten/html5.h>
+#endif
 
 namespace
 {
@@ -289,6 +292,16 @@ namespace window
         {
             throw_error_message("Unable to initialize GLEW - error: ", glewGetErrorString(result));
         }
+
+#if defined(IS_WEBGL2)
+        // WebGL2 does not allow rendering into floating-point textures (e.g. R32F/RGBA32F framebuffer
+        // attachments) or linear-filtering them unless these extensions are explicitly enabled.
+        if (const auto webgl_context = emscripten_webgl_get_current_context(); webgl_context > 0)
+        {
+            emscripten_webgl_enable_extension(webgl_context, "EXT_color_buffer_float");
+            emscripten_webgl_enable_extension(webgl_context, "OES_texture_float_linear");
+        }
+#endif
 
         // https://wiki.libsdl.org/SDL_GL_SetSwapInterval
         constexpr int ADAPTIVE_VSYNC = -1;
